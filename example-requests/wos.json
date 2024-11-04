@@ -1,0 +1,36 @@
+[
+  {
+    "method": "POST",
+    "url": "/solr/wos/select",
+    "expand": {
+      "query":  true
+    },
+    "body": {
+      "query": "replaced-by-expansion",
+      "offset": 0,
+      "limit": 10,
+      "fields": ["none"],
+      "params": {
+        "df": "author_all,grant_agency,grant_source,fund_text",
+        "hl": true,
+        "hl.snippets": "5",
+        "hl.fragsize": "600",
+        "hl.simple.pre": "⁌",
+        "hl.simple.post": "⁍",
+
+        "f.id.hl.always": true,
+        "f.title.hl.always": true,
+
+        "hl.fl": [
+          "id",
+          "title",
+
+          "author_all",
+          "grant_agency",
+          "grant_source",
+          "fund_text"
+        ]
+      }
+    }
+  }
+]

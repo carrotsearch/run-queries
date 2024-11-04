@@ -1,0 +1,25 @@
+{
+  "name": "@nsf/run-queries",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "demo": "node src/runrequests.mjs --base https://dis-checker-a02.ad.nsf.gov/ example-requests/",
+    "prettier": "prettier -w src/"
+  },
+  "dependencies": {
+    "@streamparser/json": "^0.0.21",
+    "@supercharge/promise-pool": "^3.2.0",
+    "colors": "^1.4.0",
+    "commander": "^12.1.0",
+    "js-md5": "^0.8.3",
+    "superagent": "^9.0.2",
+    "underscore": "^1.13.6",
+    "walkdir": "^0.4.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5",
+    "prettier": "^2.8.8"
+  },
+  "packageManager": "yarn@4.0.2"
+}

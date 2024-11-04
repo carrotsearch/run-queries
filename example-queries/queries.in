@@ -1,0 +1,7 @@
+"Interacting Infrastructure Disruptions"
+hummel*
+"sea pollution"
+adidas
+nike
+"bill gates"
+fn:maxwidth(10 fn:atleast(2 fn:ordered(nike adidas puma)))
