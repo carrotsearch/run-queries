@@ -1,7 +1,9 @@
 This package runs batch requests to Solr using a JSON query template
 and a plain text query-per-line file.
 
-* Installation
+There are two versions of this software: one for node.js and one for Python3.
+
+* Installation (nodejs subfolder)
 
 - Install node.js (v22.2.0 or later). 
 - Install yarn, https://yarnpkg.com/getting-started/install, run:
@@ -12,6 +14,13 @@ and a plain text query-per-line file.
 
 - Try running the software, it should display help on all available options.
   yarn node src\runrequests.mjs --help
+
+
+* Installation (python3 subfolder)
+
+- (you can use a python's venv (virtual environment) to install the dependencies)
+
+- python3 -m pip install -r requirements.txt --user
 
 
 * Request template file
@@ -84,12 +93,19 @@ fn:maxwidth(10 fn:atleast(2 fn:ordered(nike adidas puma)))
 To run all these queries using the proposals.json template, execute (replacing SOLR-ADDRESS with
 an appropriate base URL to Solr):
 
+- node.js version:
+
+cd nodejs
 mkdir responses
-yarn node src/runrequests.mjs --base https://SOLR-ADDRESS --expand-query example-queries/queries.txt example-requests/proposals.json --write-responses responses
+yarn node src/runrequests.mjs --base https://SOLR-ADDRESS --expand-query ../example-queries/queries.txt ../example-requests/proposals.json --write-responses responses
+yarn node src/runrequests.mjs --base https://SOLR-ADDRESS --expand-query ../example-queries/queries.txt ../example-requests/wos.json --write-responses responses
 
-or
+- python version:
 
-yarn node src/runrequests.mjs --base https://SOLR-ADDRESS --expand-query example-queries/queries.txt example-requests/wos.json --write-responses responses
+cd python3
+mkdir responses
+python3 runrequests.py --base https://SOLR-ADDRESS --queries ../example-queries/queries.txt --request ../example-requests/proposals.json --write-responses responses
+python3 runrequests.py --base https://SOLR-ADDRESS --queries ../example-queries/queries.txt --request ../example-requests/wos.json --write-responses responses
 
 
 * Responses
