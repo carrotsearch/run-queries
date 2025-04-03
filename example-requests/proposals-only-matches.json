@@ -1,0 +1,20 @@
+[
+  {
+    "method": "POST",
+    "url": "/solr/proposals/select",
+    "expand": {
+      "query":  true
+    },
+    "body": {
+      "query": "replaced-by-expansion",
+      "offset": 0,
+      "limit": 20,
+      "fields": ["id", "title"],
+      "params": {
+        "df": "pi_all,bio,support,collaborators,summary",
+        "hl": false,
+        "hitregions": "true"
+      }
+    }
+  }
+]

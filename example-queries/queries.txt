@@ -5,3 +5,4 @@ adidas
 nike
 "bill gates"
 fn:maxwidth(10 fn:atleast(2 fn:ordered(nike adidas puma)))
+fn:maxwidth(10 fn:ordered(king bible))

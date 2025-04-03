@@ -45,7 +45,8 @@ async def process_response(req, md5, res):
             "request": req,
             "response-filtered": {
                 "numFound": num_found,
-                "highlights": res.get("highlighting", {})
+                "highlights": res.get("highlighting", {}),
+                "hitregions": res.get("hitregions", {})
             }
         }
         with open(target_path, "w", encoding="utf-8") as file:
