@@ -2,11 +2,11 @@
   {
     "method": "POST",
     "url": "/solr/wos/select",
-    "expand": {
-      "query":  true
-    },
+    "expand": [
+      "$.body.query"
+    ],
     "body": {
-      "query": "replaced-by-expansion",
+      "query": "$query",
       "offset": 0,
       "limit": 10,
       "fields": ["none"],

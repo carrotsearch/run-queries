@@ -6,7 +6,7 @@
       "$.body.query"
     ],
     "body": {
-      "query": "$query",
+      "query": "(constant part) AND ($query)",
       "offset": 0,
       "limit": 20,
       "fields": ["id", "title"],

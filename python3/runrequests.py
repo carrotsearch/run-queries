@@ -6,34 +6,46 @@ import copy
 import hashlib
 from urllib.parse import urljoin
 from pathlib import Path
+from jsonpath_ng import parse
+from string import Template
 
 # Parse command-line options
 parser = argparse.ArgumentParser(usage="[options] runrequests.py")
 parser.add_argument("--request", required=True, help="template request file (json)")
-parser.add_argument("--queries", required=True, help="queries file (plain text)")
+parser.add_argument("--queries", required=False, help="expand template requests with queries from file.")
 parser.add_argument("-b", "--base", help="Base URL to resolve relative request URIs against.")
 parser.add_argument("-p", "--parallelism", type=int, default=1, help="Parallelism level.")
 parser.add_argument("--write-responses", help="Write responses to the provided directory.")
-parser.add_argument("--expand-query", help="Expand template requests with queries from file.")
 args = parser.parse_args()
 
 
-# Read the request template
+# Read the request templates file.
 with open(args.request, "r", encoding="utf-8") as file:
-    req_template = json.load(file)[0]
+    req_templates = json.load(file)
 
-# Read input queries.
-with open(args.queries, "r", encoding="utf-8") as file:
-    queries = [line.strip() for line in file if line.strip()]
+# for now, just use a single template.
+if len(req_templates) != 1:
+    raise "Expected exactly one request in the request template file: " + file
+req_template = req_templates[0]
+
+# Read input queries, if they are present.
+if args.queries is not None:
+    with open(args.queries, "r", encoding="utf-8") as file:
+        queries = [line.strip() for line in file if line.strip()]
+else:
+    queries = [""]
 
 # Prepare output directory, if provided.
-if args.write_responses:
+if args.write_responses is not None:
     target_dir = Path(args.write_responses)
     target_dir.mkdir(parents=True, exist_ok=True)
 
-
-url = urljoin(args.base, req_template["url"])
-
+# check for jsonpath expansions.
+expand_paths = []
+if 'expand' in req_template:
+    if not isinstance(req_template['expand'], list):
+        raise "Expected 'expand' to be a list of json-paths in: " + file
+    expand_paths = [parse(path) for path in req_template['expand']]
 
 async def process_response(req, md5, res):
     num_found = res.get("response", {}).get("numFound", 0)
@@ -54,12 +66,14 @@ async def process_response(req, md5, res):
 
 async def process_query(session, query):
     req = copy.deepcopy(req_template)
-    req["body"]["query"] = query
+    for jsonpath in expand_paths:
+        jsonpath.update(req, lambda val, *_ : Template(val).safe_substitute(query=query))
 
     req_str = json.dumps(req, indent="  ", sort_keys=True)
     md5 = hashlib.md5(req_str.encode()).hexdigest()
 
     try:
+        url = urljoin(args.base, req_template["url"])
         async with session.post(url, json=req['body']) as response:
             response_data = await response.json()
             await process_response(req, md5, response_data)

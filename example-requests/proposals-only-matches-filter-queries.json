@@ -3,15 +3,16 @@
     "method": "POST",
     "url": "/solr/proposals/select",
     "expand": [
-      "$.body.query"
+      "$.body.params.fq"
     ],
     "body": {
-      "query": "$query",
+      "query": "infrastructure OR (constant query example)",
       "offset": 0,
       "limit": 20,
       "fields": ["id", "title"],
       "params": {
         "df": "pi_all,bio,support,collaborators,summary",
+        "fq": "$query",
         "hl": false,
         "hitregions": "true"
       }

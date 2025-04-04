@@ -1,42 +1,30 @@
 This package runs batch requests to Solr using a JSON query template
 and a plain text query-per-line file.
 
-There are two versions of this software: one for node.js and one for Python3.
-
-* Installation (nodejs subfolder)
-
-- Install node.js (v22.2.0 or later). 
-- Install yarn, https://yarnpkg.com/getting-started/install, run:
-  corepack enable
-
-- Install dependencies:
-  yarn install
-
-- Try running the software, it should display help on all available options.
-  yarn node src\runrequests.mjs --help
-
-
 * Installation (python3 subfolder)
 
-- (you can use a python's venv (virtual environment) to install the dependencies)
-
 - python3 -m pip install -r requirements.txt --user
+
+- Alternatively, you can use a python's venv (virtual environment) to install the dependencies.
+  - python3 -m venv .venv
+  - source .venv/bin/activate
+  - python3 -m pip install -r requirements.txt
 
 
 * Request template file
 
 Prepare a "solr query template" and a list of text queries that should be sent
-to Solr using this template. Here is an example query template (proposals.json):
+to Solr using this template (one per line). Here is an example query template:
 
 [
   {
     "method": "POST",
     "url": "/solr/wos/select",
-    "expand": {
-      "query":  true
-    },
+    "expand": [
+      "$.body.query"
+    ],
     "body": {
-      "query": "replaced-by-expansion",
+      "query": "$query",
       "offset": 0,
       "limit": 10,
       "fields": ["none"],
@@ -65,9 +53,11 @@ to Solr using this template. Here is an example query template (proposals.json):
   }
 ]
 
-The "url" element is either a full URL or an URL path to the Solr service. The "body" element contains
+The "url" element is either a full URL or a URL path to the Solr service. The "body" element contains
 Solr json query to be sent to the server. Important elements:
 
+- "expand" -> this is an array of json paths applied against the request template. Any "$query" text
+  at those paths is replaced with the current query from the queries file.
 - "body" -> limit: how many documents (max) to return,
 - "body -> params -> df": a set of default fields which should be included for each line in the query file,
 - "body -> params -> hl.fl": a set of fields for which "highlights" should be returned. Highlights include
@@ -90,19 +80,8 @@ nike
 "bill gates"
 fn:maxwidth(10 fn:atleast(2 fn:ordered(nike adidas puma)))
 
-To run all these queries using the proposals.json template, execute (replacing SOLR-ADDRESS with
-an appropriate base URL to Solr):
+To run all these queries against a template, execute (replacing SOLR-ADDRESS with an appropriate base URL to Solr):
 
-- node.js version:
-
-cd nodejs
-mkdir responses
-yarn node src/runrequests.mjs --base https://SOLR-ADDRESS --expand-query ../example-queries/queries.txt ../example-requests/proposals.json --write-responses responses
-yarn node src/runrequests.mjs --base https://SOLR-ADDRESS --expand-query ../example-queries/queries.txt ../example-requests/wos.json --write-responses responses
-
-- python version:
-
-cd python3
 mkdir responses
 python3 runrequests.py --base https://SOLR-ADDRESS --queries ../example-queries/queries.txt --request ../example-requests/proposals.json --write-responses responses
 python3 runrequests.py --base https://SOLR-ADDRESS --queries ../example-queries/queries.txt --request ../example-requests/wos.json --write-responses responses
