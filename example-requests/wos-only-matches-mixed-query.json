@@ -1,0 +1,21 @@
+[
+  {
+    "method": "POST",
+    "url": "/solr/wos/select",
+    "expand": [
+      "$.body.query"
+    ],
+    "body": {
+      "query": "author_name:(\"kalinke, cristiane\" OR \"Smith, John\") AND ($query)",
+      "offset": 0,
+      "limit": 10,
+      "fields": ["none"],
+      "params": {
+        "df": "author_all,grant_agency,grant_source,fund_text,abstract",
+        "fq": "*:*",
+        "hl": false,
+        "hitregions": "true"
+      }
+    }
+  }
+]
